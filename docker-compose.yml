@@ -1,0 +1,17 @@
+version: '2.4'
+
+services:
+    postgres:
+        container_name: go_todo_postgres
+        image: postgres:13.3-alpine
+        restart: always
+        ports:
+            - "5432:5432"
+        volumes:
+            - "todo_list:/var/lib/postgresql/data"
+        environment:
+            POSTGRES_USER: "root"
+            POSTGRES_PASSWORD: "secret"
+
+volumes:
+    todo_list:
