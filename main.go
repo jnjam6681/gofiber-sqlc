@@ -6,9 +6,19 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	postgres "github.com/jnjam6681/gofiber-sqlc/database/postgres/sqlc"
+	"github.com/jnjam6681/gofiber-sqlc/pkg/routes"
+	"github.com/jnjam6681/gofiber-sqlc/pkg/todo"
 
 	_ "github.com/lib/pq"
 )
+
+type Handlers struct {
+	Repo *postgres.Repo
+}
+
+func NewHandlers(repo *postgres.Repo) *Handlers {
+	return &Handlers{Repo: repo}
+}
 
 func main() {
 
@@ -18,8 +28,11 @@ func main() {
 	}
 
 	result := postgres.NewRepo(db)
-	print(*result)
-	// todoService := todo.NewService(result)
+	r := todo.NewRepository(result)
+	// handlers := NewHandlers(result)
+	// print(handlers)
+
+	todoService := todo.NewService(r)
 
 	app := fiber.New()
 
@@ -27,8 +40,8 @@ func main() {
 		return c.SendString("Hello World")
 	})
 
-	// api := app.Group("/api")
-	// routes.TodoRouter(api, todoService)
+	api := app.Group("/api")
+	routes.TodoRouter(api, todoService)
 
 	app.Listen(":3000")
 }

@@ -16,6 +16,7 @@ func addTodo(service todo.Service) fiber.Handler {
 		// 	Name string `json:"name"`
 		// }
 		var requestBody postgres.Todo
+		// print(requestBody)
 		err := c.BodyParser(&requestBody)
 		if err != nil {
 			_ = c.JSON(&fiber.Map{

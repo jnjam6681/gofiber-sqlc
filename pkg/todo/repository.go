@@ -14,7 +14,7 @@ type repository struct {
 	repo *postgres.Repo
 }
 
-func NewRepo(repo *postgres.Repo) Repository {
+func NewRepository(repo *postgres.Repo) Repository {
 	return &repository{repo: repo}
 }
 
