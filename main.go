@@ -6,8 +6,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	postgres "github.com/jnjam6681/gofiber-sqlc/database/postgres/sqlc"
-	delivery "github.com/jnjam6681/gofiber-sqlc/delivery/http"
-	"github.com/jnjam6681/gofiber-sqlc/usecase"
 
 	_ "github.com/lib/pq"
 )
@@ -20,6 +18,8 @@ func main() {
 	}
 
 	result := postgres.NewRepo(db)
+	print(*result)
+	// todoService := todo.NewService(result)
 
 	app := fiber.New()
 
@@ -27,10 +27,8 @@ func main() {
 		return c.SendString("Hello World")
 	})
 
-	api := app.Group("/api")
-
-	todoService := usecase.NewService(result)
-	delivery.TodoRouter(api, todoService)
+	// api := app.Group("/api")
+	// routes.TodoRouter(api, todoService)
 
 	app.Listen(":3000")
 }
