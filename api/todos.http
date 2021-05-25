@@ -2,13 +2,33 @@
 GET http://localhost:3000/
 
 
-### Get all todos
-GET http://localhost:3000/api/todos
-
 ### Add new todo
-POST http://localhost:3000/api/todos HTTP/1.1
+POST http://localhost:3000/api/todo
 content-type: application/json
 
 {
     "name": "GG1"
+}
+
+### Get all todos
+GET http://localhost:3000/api/todos
+
+### Get single todo
+GET http://localhost:3000/api/todo/1
+
+### Update single todo
+PATCH http://localhost:3000/api/todo
+content-type: application/json
+
+{
+    "id": 1,
+    "complete": true
+}
+
+### Delete single todo
+DELETE http://localhost:3000/api/todo
+content-type: application/json
+
+{
+    "id": 1
 }

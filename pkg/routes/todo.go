@@ -118,10 +118,10 @@ func deleteTodo(service todo.Service) fiber.Handler {
 
 func updateTodo(service todo.Service) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		type request struct {
-			ID       string `json:"id"`
-			Complete bool   `json:"complete"`
-		}
+		// type request struct {
+		// 	ID       string `json:"id"`
+		// 	Complete bool   `json:"complete"`
+		// }
 
 		var requestBody postgres.Todo
 		err := c.BodyParser(&requestBody)
