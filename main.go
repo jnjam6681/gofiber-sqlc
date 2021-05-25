@@ -14,7 +14,7 @@ import (
 
 func main() {
 
-	db, err := sql.Open("postgres", fmt.Sprintf("dbname=%s password=secret user=root sslmode=disable", "todo_list"))
+	db, err := sql.Open("postgres", fmt.Sprintf("host=%s dbname=%s password=secret user=root sslmode=disable", "localhost", "todo_list"))
 	if err != nil {
 		panic(err)
 	}

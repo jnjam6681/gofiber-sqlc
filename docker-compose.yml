@@ -12,6 +12,21 @@ services:
         environment:
             POSTGRES_USER: "root"
             POSTGRES_PASSWORD: "secret"
+        networks:
+            - todo_list
+
+    backend:
+        container_name: go_todo_backend
+        build: .
+        depends_on: 
+            - postgres
+        ports:
+            - "3000:3000"
+        networks: 
+            - todo_list
 
 volumes:
+    todo_list:
+
+networks:
     todo_list:
