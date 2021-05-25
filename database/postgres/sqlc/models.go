@@ -9,6 +9,6 @@ import (
 type Todo struct {
 	ID        int64     `json:"id"`
 	Name      string    `json:"name"`
-	Complate  bool      `json:"complate"`
+	Complete  bool      `json:"complete"`
 	CreatedAt time.Time `json:"createdAt"`
 }

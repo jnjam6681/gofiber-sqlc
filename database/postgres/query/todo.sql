@@ -15,7 +15,7 @@ ORDER BY created_at;
 
 -- name: UpdateTodo :one
 UPDATE todo
-SET complate = $2
+SET complete = $2
 WHERE id = $1
 RETURNING *;
 

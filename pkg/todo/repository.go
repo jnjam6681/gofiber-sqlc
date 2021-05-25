@@ -11,6 +11,7 @@ type Repository interface {
 	ListTodos() (*[]postgres.Todo, error)
 	GetTodo(id int64) (*postgres.Todo, error)
 	DeleteTodo(todo *postgres.Todo) error
+	UpdateTodo(todo *postgres.Todo) (*postgres.Todo, error)
 }
 
 type repository struct {
@@ -26,6 +27,20 @@ func (r *repository) InsertTodo(todo *postgres.Todo) (*postgres.Todo, error) {
 	if err != nil {
 		return nil, err
 	}
+	return &result, nil
+}
+
+func (r *repository) UpdateTodo(todo *postgres.Todo) (*postgres.Todo, error) {
+	arg := postgres.UpdateTodoParams{
+		ID:       todo.ID,
+		Complete: todo.Complete,
+	}
+
+	result, err := r.repo.UpdateTodo(context.Background(), arg)
+	if err != nil {
+		return nil, err
+	}
+
 	return &result, nil
 }
 

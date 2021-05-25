@@ -12,7 +12,7 @@ INSERT INTO todo (
   name
 ) VALUES (
   $1
-) RETURNING id, name, complate, created_at
+) RETURNING id, name, complete, created_at
 `
 
 func (q *Queries) CreateTodo(ctx context.Context, name string) (Todo, error) {
@@ -21,7 +21,7 @@ func (q *Queries) CreateTodo(ctx context.Context, name string) (Todo, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Complate,
+		&i.Complete,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -38,7 +38,7 @@ func (q *Queries) DeleteTodo(ctx context.Context, id int64) error {
 }
 
 const getTodo = `-- name: GetTodo :one
-SELECT id, name, complate, created_at FROM todo
+SELECT id, name, complete, created_at FROM todo
 WHERE id = $1 LIMIT 1
 `
 
@@ -48,14 +48,14 @@ func (q *Queries) GetTodo(ctx context.Context, id int64) (Todo, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Complate,
+		&i.Complete,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const listTodos = `-- name: ListTodos :many
-SELECT id, name, complate, created_at FROM todo
+SELECT id, name, complete, created_at FROM todo
 ORDER BY created_at
 `
 
@@ -71,7 +71,7 @@ func (q *Queries) ListTodos(ctx context.Context) ([]Todo, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
-			&i.Complate,
+			&i.Complete,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -89,23 +89,23 @@ func (q *Queries) ListTodos(ctx context.Context) ([]Todo, error) {
 
 const updateTodo = `-- name: UpdateTodo :one
 UPDATE todo
-SET complate = $2
+SET complete = $2
 WHERE id = $1
-RETURNING id, name, complate, created_at
+RETURNING id, name, complete, created_at
 `
 
 type UpdateTodoParams struct {
 	ID       int64 `json:"id"`
-	Complate bool  `json:"complate"`
+	Complete bool  `json:"complete"`
 }
 
 func (q *Queries) UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, error) {
-	row := q.db.QueryRowContext(ctx, updateTodo, arg.ID, arg.Complate)
+	row := q.db.QueryRowContext(ctx, updateTodo, arg.ID, arg.Complete)
 	var i Todo
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Complate,
+		&i.Complete,
 		&i.CreatedAt,
 	)
 	return i, err

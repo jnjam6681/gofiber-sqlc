@@ -9,6 +9,7 @@ type Service interface {
 	ListTodos() (*[]postgres.Todo, error)
 	GetTodo(id int64) (*postgres.Todo, error)
 	DeleteTodo(todo *postgres.Todo) error
+	UpdateTodo(todo *postgres.Todo) (*postgres.Todo, error)
 }
 
 type service struct {
@@ -23,6 +24,10 @@ func NewService(r Repository) Service {
 
 func (s *service) InsertTodo(todo *postgres.Todo) (*postgres.Todo, error) {
 	return s.repository.InsertTodo(todo)
+}
+
+func (s *service) UpdateTodo(todo *postgres.Todo) (*postgres.Todo, error) {
+	return s.repository.UpdateTodo(todo)
 }
 
 func (s *service) ListTodos() (*[]postgres.Todo, error) {
