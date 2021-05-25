@@ -65,15 +65,6 @@ func getTodo(service todo.Service) fiber.Handler {
 			})
 		}
 
-		// var requestBody postgres.Todo
-		// err := c.BodyParser(&requestBody)
-		// if err != nil {
-		// 	_ = c.JSON(&fiber.Map{
-		// 		"success": false,
-		// 		"error":   err,
-		// 	})
-		// }
-
 		result, err := service.GetTodo(int64(id))
 		if err != nil {
 			_ = c.JSON(&fiber.Map{

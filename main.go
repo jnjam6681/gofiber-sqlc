@@ -12,14 +12,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type Handlers struct {
-	Repo *postgres.Repo
-}
-
-func NewHandlers(repo *postgres.Repo) *Handlers {
-	return &Handlers{Repo: repo}
-}
-
 func main() {
 
 	db, err := sql.Open("postgres", fmt.Sprintf("dbname=%s password=secret user=root sslmode=disable", "todo_list"))
@@ -28,11 +20,9 @@ func main() {
 	}
 
 	result := postgres.NewRepo(db)
-	r := todo.NewRepository(result)
-	// handlers := NewHandlers(result)
-	// print(handlers)
+	repo := todo.NewRepository(result)
 
-	todoService := todo.NewService(r)
+	todoService := todo.NewService(repo)
 
 	app := fiber.New()
 
