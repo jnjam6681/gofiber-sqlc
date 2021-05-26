@@ -6,127 +6,126 @@ import (
 	"github.com/jnjam6681/gofiber-sqlc/pkg/todo"
 )
 
+type handler struct {
+	service todo.Service
+}
+
 func TodoRouter(app fiber.Router, service todo.Service) {
-	app.Post("/todo", addTodo(service))
-	app.Get("/todos", listTodos(service))
-	app.Get("/todo/:id", getTodo(service))
-	app.Delete("/todo", deleteTodo(service))
-	app.Patch("/todo", updateTodo(service))
+
+	handler := &handler{
+		service: service,
+	}
+
+	app.Post("/todo", handler.addTodo)
+	app.Get("/todos", handler.listTodos)
+	app.Get("/todo/:id", handler.getTodo)
+	app.Delete("/todo", handler.deleteTodo)
+	app.Patch("/todo", handler.updateTodo)
 }
 
-func addTodo(service todo.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		// type request struct {
-		// 	Name string `json:"name"`
-		// }
+func (h *handler) addTodo(c *fiber.Ctx) error {
+	// type request struct {
+	// 	Name string `json:"name"`
+	// }
 
-		var requestBody postgres.Todo
-		err := c.BodyParser(&requestBody)
-		if err != nil {
-			_ = c.JSON(&fiber.Map{
-				"success": false,
-				"error":   err,
-			})
-		}
+	var requestBody postgres.Todo
+	err := c.BodyParser(&requestBody)
+	if err != nil {
+		_ = c.JSON(&fiber.Map{
+			"success": false,
+			"error":   err,
+		})
+	}
 
-		result, err := service.InsertTodo(&requestBody)
-		return c.JSON(&fiber.Map{
-			"status": result,
+	result, err := h.service.InsertTodo(&requestBody)
+	return c.JSON(&fiber.Map{
+		"status": result,
+		"error":  err,
+	})
+}
+
+func (h *handler) listTodos(c *fiber.Ctx) error {
+	result, err := h.service.ListTodos()
+
+	if err != nil {
+		_ = c.JSON(&fiber.Map{
+			"status": false,
 			"error":  err,
 		})
 	}
+
+	return c.JSON(&fiber.Map{
+		"status": result,
+		"error":  err,
+	})
 }
 
-func listTodos(service todo.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		result, err := service.ListTodos()
+func (h *handler) getTodo(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+	// id, err := strconv.Atoi(paramsId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "cannot parse id",
+		})
+	}
 
-		if err != nil {
-			_ = c.JSON(&fiber.Map{
-				"status": false,
-				"error":  err,
-			})
-		}
-
-		return c.JSON(&fiber.Map{
-			"status": result,
+	result, err := h.service.GetTodo(int64(id))
+	if err != nil {
+		_ = c.JSON(&fiber.Map{
+			"status": false,
 			"error":  err,
 		})
 	}
+
+	return c.JSON(&fiber.Map{
+		"status": result,
+		"error":  err,
+	})
+
 }
 
-func getTodo(service todo.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		id, err := c.ParamsInt("id")
-		// id, err := strconv.Atoi(paramsId)
-		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": "cannot parse id",
-			})
-		}
+func (h *handler) deleteTodo(c *fiber.Ctx) error {
+	var requestBody postgres.Todo
+	err := c.BodyParser(&requestBody)
+	if err != nil {
+		_ = c.JSON(&fiber.Map{
+			"success": false,
+			"error":   err,
+		})
+	}
 
-		result, err := service.GetTodo(int64(id))
-		if err != nil {
-			_ = c.JSON(&fiber.Map{
-				"status": false,
-				"error":  err,
-			})
-		}
-
-		return c.JSON(&fiber.Map{
-			"status": result,
+	err = h.service.DeleteTodo(&requestBody)
+	if err != nil {
+		_ = c.JSON(&fiber.Map{
+			"status": false,
 			"error":  err,
 		})
 	}
+
+	return c.JSON(&fiber.Map{
+		"status":  false,
+		"message": "deleted successfully",
+	})
 }
 
-func deleteTodo(service todo.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+func (h *handler) updateTodo(c *fiber.Ctx) error {
+	// type request struct {
+	// 	ID       string `json:"id"`
+	// 	Complete bool   `json:"complete"`
+	// }
 
-		var requestBody postgres.Todo
-		err := c.BodyParser(&requestBody)
-		if err != nil {
-			_ = c.JSON(&fiber.Map{
-				"success": false,
-				"error":   err,
-			})
-		}
-
-		err = service.DeleteTodo(&requestBody)
-		if err != nil {
-			_ = c.JSON(&fiber.Map{
-				"status": false,
-				"error":  err,
-			})
-		}
-
-		return c.JSON(&fiber.Map{
-			"status":  false,
-			"message": "deleted successfully",
+	var requestBody postgres.Todo
+	err := c.BodyParser(&requestBody)
+	if err != nil {
+		_ = c.JSON(&fiber.Map{
+			"success": false,
+			"error":   err,
 		})
 	}
-}
 
-func updateTodo(service todo.Service) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		// type request struct {
-		// 	ID       string `json:"id"`
-		// 	Complete bool   `json:"complete"`
-		// }
-
-		var requestBody postgres.Todo
-		err := c.BodyParser(&requestBody)
-		if err != nil {
-			_ = c.JSON(&fiber.Map{
-				"success": false,
-				"error":   err,
-			})
-		}
-
-		result, err := service.UpdateTodo(&requestBody)
-		return c.JSON(&fiber.Map{
-			"status": result,
-			"error":  err,
-		})
-	}
+	result, err := h.service.UpdateTodo(&requestBody)
+	return c.JSON(&fiber.Map{
+		"status": result,
+		"error":  err,
+	})
 }
